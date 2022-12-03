@@ -1,6 +1,9 @@
 import pygame
 import random
 import math
+import time
+import os
+import sys
 
 size = (1000, 800)
 
@@ -15,8 +18,17 @@ split_lock = False
 bounce_spread = 40
 score = 0
 
+def resource_path(relative_path):
+    try:
+    # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 def load_image(path):
-    return pygame.image.load(path)
+    return pygame.image.load(resource_path(path))
 
 class Object:
     def __init__(self, x=0, y=0) -> None:
@@ -29,11 +41,7 @@ class Object:
         self.friction = 0.4
         self.gravity = pygame.math.Vector3(0, 0, -3)
         self.mass = 2
-<<<<<<< HEAD
         self.deleteme = False
-=======
-        self.health = 6
->>>>>>> a91db2162afc8d436bb8ae1eb0519e811e60b4d0
 
     def update(self):
         self.acc = pygame.math.Vector3(0, 0, 0)
@@ -223,7 +231,7 @@ class Ball(Animated):
     def update(self):
         super().update()
         
-        if self.pos.z < 0:
+        if self.pos.z < 1:
             self.one_forces.append(0.8 * vec3(0, 0, abs(self.vel.z) * self.bounce_mult))
             self.vel.z = 0
             self.pos.z = 0
@@ -245,17 +253,12 @@ class Ball(Animated):
         self.collide()
             
     def explode(self):
-        print("AAAA")
         for o in objects:
             if type(o) == Player:
-<<<<<<< HEAD
-                o.mass = max(0, o.mass*0.8)
-=======
-                o.size.x -= 1
-                o.size.y -= 1
+                o.size.x /= 1.5
+                o.size.y /= 1.5
             if o.size.x<=10:
                 objects.remove(o)
->>>>>>> a91db2162afc8d436bb8ae1eb0519e811e60b4d0
                 
     def draw(self):
         super().draw()
@@ -268,11 +271,7 @@ class Ball(Animated):
             if (slime.pos-self.pos).length()<(self.size.x/2+slime.size.x/2)*1.2:
                 self.one_forces.append(vec3(-self.vel.x+(2*random.random()-1)*5, -self.vel.y+(2*random.random()-1)*bounce_spread, 100))
                 slime.sploutch()
-<<<<<<< HEAD
                 score += 1
-=======
-                slime.mass=min(10, slime.mass+0.1)
->>>>>>> a91db2162afc8d436bb8ae1eb0519e811e60b4d0
                 return
 
 
@@ -302,6 +301,8 @@ objects = [
 font = pygame.font.Font('Roboto-Regular.ttf', 128)
 
 
+won = True
+
 while carryOn:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -319,7 +320,15 @@ while carryOn:
         if object.deleteme:
             objects.pop(i)
         i+=1
-        
+    
+    if score>=100:
+        break
+    
+    if len(objects)==1:
+        won = False
+        break
+    
+
     if should_split:
         balls = [o for o in objects if type(o)==Player]
         balls.sort(key=lambda x: x.size.x)
@@ -345,5 +354,13 @@ while carryOn:
     pygame.display.flip()
 
     clock.tick(60)
+
+screen.fill(darkgreen)
+text = "YOU WIN :)" if won else "YOU LOSE :("
+img = font.render(text, True, white)
+screen.blit(img, (size[0]/2-(len(text)/2*60), size[1]/2-128/2))
+pygame.display.flip()
+
+time.sleep(3)
 
 pygame.quit()
