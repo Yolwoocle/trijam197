@@ -123,13 +123,16 @@ class Player(Animated):
 class Ball(Animated):
     def __init__(self, x, y, initSize=10):
         super().__init__(x, y)
+        self.pos.z = -30
+        
         self.size = initSize
         self.sprites = Image.balls
         self.sprite_offset = pygame.math.Vector2(0,0)
         self.forces = [pygame.math.Vector3()]
         
-        self.bounce_force = -30
+        self.bounce_mult = 0.4
         
+        self.gravity(0, 0, -9.81)
         self.mass = 10
     
     def update(self):
@@ -137,7 +140,7 @@ class Ball(Animated):
         
         self.forces[0] = pygame.math.Vector3()        
         if self.pos.z < 0:
-            self.forces[0].z = -self.bounce_force
+            self.forces[0].z = -self.vel.z * self.bounce_mult
         
 
     def draw(self):
