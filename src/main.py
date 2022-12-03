@@ -8,6 +8,9 @@ class Object:
         self.pos = pygame.math.Vector2(x, y)
         self.vel = pygame.math.Vector2(0, 0)
 
+    def update(self):
+        self.pos += self.vel * self.friction
+
 class Image:
     test = load_image('img/test.png')
 
@@ -20,7 +23,7 @@ class Animated(Object):
         self.current_sprite = 0
         
     def draw(self):
-        if len(self.sprites)<self.current_sprite:
+        if len(self.sprites) < self.current_sprite:
             screen.blit(self.sprites[self.current_sprite], self.pos)
 
 
@@ -31,9 +34,28 @@ class Player(Animated):
 
         self.image = Image.test
         self.friction = 0.97
+        self.speed = 10
 
     def update(self):
-        self.pos += self.vel * self.friction
+        super().update()
+
+        keys = pygame.key.get_pressed()
+        direction = pygame.math.Vector2()
+        if keys[pygame.K_LEFT]: # We can check if a key is pressed like this
+            direction.x = -1
+        
+        if keys[pygame.K_RIGHT]:
+            direction.x = 1
+
+        if keys[pygame.K_UP]:
+            direction.y = -1
+
+        if keys[pygame.K_DOWN]:
+            direction.y = 1
+        direction.normalize()
+        
+        vel += direction * self.speed
+
 
     def draw(self):
         ...
