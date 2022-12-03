@@ -242,10 +242,13 @@ class Ball(Animated):
             if (slime.pos-self.pos).length()<(self.size.x/2+slime.size.x/2)*1.2:
                 self.one_forces.append(vec3(-self.vel.x+(2*random.random()-1)*5, -self.vel.y+(2*random.random()-1)*bounce_spread, 100))
                 slime.sploutch()
+                slime.mass+=0.5
                 return
 
 
 pygame.init()
+
+ghost = [load_image(p) for p in Image.slimes]
 
 # Define some colors
 black = (0, 0, 0)
