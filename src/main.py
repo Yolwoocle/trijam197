@@ -19,6 +19,19 @@ carryOn = True
 # The clock will be used to control how fast the screen updates
 clock = pygame.time.Clock()
 
+class Image:
+    test = pygame.image.load('img/test.png')
+
+class Object:
+    def __init__(self, x, y) -> None:
+        self.x = x
+        self.y = y
+
+class Player(Object):
+    def __init__(self, x, y) -> None:
+        super().__init__(x, y)
+        self.sprite = 
+
 # -------- Main Program Loop -----------
 while carryOn:
     # --- Main event loop
