@@ -4,6 +4,8 @@ size = (700, 500)
 
 limits = ((0, 0, -1000), (700, 500, 10000))
 
+vec2 = pygame.math.Vector2
+vec3 = pygame.math.Vector3
 
 def load_image(path):
     return pygame.image.load(path)
@@ -16,7 +18,7 @@ class Object:
         self.acc =  pygame.math.Vector3(0, 0, 0)
         self.forces = []
         self.friction = 0.7
-        self.gravity = 0
+        self.gravity = pygame.math.Vector3()
         self.mass = 2
 
     def update(self):
@@ -92,6 +94,7 @@ class Player(Animated):
         self.sprites = Image.slimes
 
         self.speed = 10
+        self.size = 
         self.forces = [pygame.math.Vector3(0,0,0)]
         self.input_rate = 5
 
@@ -144,7 +147,7 @@ class Ball(Animated):
         
 
     def draw(self):
-        super.draw()
+        super().draw()
 
 
 pygame.init()
@@ -178,8 +181,8 @@ while carryOn:
         object.update()
 
     # --- Drawing code should go here
+    screen.fill(white)
     for object in objects:
-        screen.fill(white)
         object.draw()
     
     pygame.display.flip()
