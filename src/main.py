@@ -38,7 +38,6 @@ class Player(Animated):
     def draw(self):
         ...
 
-        
 
 class Ball(Animated):
     def __init__(self, initSize=10):
