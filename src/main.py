@@ -29,7 +29,11 @@ class Object:
         self.friction = 0.4
         self.gravity = pygame.math.Vector3(0, 0, -3)
         self.mass = 2
+<<<<<<< HEAD
         self.deleteme = False
+=======
+        self.health = 6
+>>>>>>> a91db2162afc8d436bb8ae1eb0519e811e60b4d0
 
     def update(self):
         self.acc = pygame.math.Vector3(0, 0, 0)
@@ -135,7 +139,7 @@ class Player(Animated):
         global split_lock
         super().update()
         
-        self.size = vec2(self.mass, self.mass) * 100
+        # self.size = vec2(self.mass, self.mass) * 100
 
         keys = pygame.key.get_pressed()
         self.forces[0] = pygame.math.Vector3()
@@ -184,9 +188,8 @@ class Player(Animated):
         # self.size /= 2
     
     def shrink(self):
-        self.life *= 0.8
+        # self.life *= 0.8
         self.size *= 0.8
-        self.mass *= 0.8
     
     def sploutch(self):
         self.scrouch = 1.8
@@ -245,7 +248,14 @@ class Ball(Animated):
         print("AAAA")
         for o in objects:
             if type(o) == Player:
+<<<<<<< HEAD
                 o.mass = max(0, o.mass*0.8)
+=======
+                o.size.x -= 1
+                o.size.y -= 1
+            if o.size.x<=10:
+                objects.remove(o)
+>>>>>>> a91db2162afc8d436bb8ae1eb0519e811e60b4d0
                 
     def draw(self):
         super().draw()
@@ -258,11 +268,17 @@ class Ball(Animated):
             if (slime.pos-self.pos).length()<(self.size.x/2+slime.size.x/2)*1.2:
                 self.one_forces.append(vec3(-self.vel.x+(2*random.random()-1)*5, -self.vel.y+(2*random.random()-1)*bounce_spread, 100))
                 slime.sploutch()
+<<<<<<< HEAD
                 score += 1
+=======
+                slime.mass=min(10, slime.mass+0.1)
+>>>>>>> a91db2162afc8d436bb8ae1eb0519e811e60b4d0
                 return
 
 
 pygame.init()
+
+ghost = [load_image(p) for p in Image.slimes]
 
 # Define some colors
 black = (0, 0, 0)
@@ -310,6 +326,7 @@ while carryOn:
         balls[-1].shrink()
         np = Player(balls[-1].pos.x, balls[-1].pos.y)
         np.size = vec2(balls[-1].size.x, balls[-1].size.y)
+        np.mass = balls[-1].mass
         f = vec3(random.random()-0.5, random.random()-0.5, random.random()).normalize()*min(0.6, random.random())*100
         np.one_forces.append(f)
         balls[-1].one_forces.append(-f)
