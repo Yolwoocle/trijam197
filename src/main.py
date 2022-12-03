@@ -172,7 +172,7 @@ class Ball(Animated):
         self.sprite_offset = pygame.math.Vector2(0,0)
         self.forces = [pygame.math.Vector3()]
         
-        rand_ang = math.pi/4 + (math.pi/2) * random.randint(0,3)
+        rand_ang = math.pi/4 + (math.pi/2) * random.random()#random.randint(0,3)
         spd = 5 + random.random() * 3
         self.vel.x = math.cos(rand_ang) * spd
         self.vel.y = math.sin(rand_ang) * spd
