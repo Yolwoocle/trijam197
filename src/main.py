@@ -132,6 +132,8 @@ class Player(Animated):
     def update(self):
         global split_lock
         super().update()
+        
+        self.size = vec2(self.mass, self.mass) * 100
 
         keys = pygame.key.get_pressed()
         self.forces[0] = pygame.math.Vector3()
@@ -180,6 +182,7 @@ class Player(Animated):
         # self.size /= 2
     
     def shrink(self):
+        self.life *= 0.8
         self.size *= 0.8
         self.mass *= 0.8
     
@@ -208,6 +211,8 @@ class Ball(Animated):
         # self.gravity = pygame.math.Vector3(0, 0, -3)
         self.mass = 10
         self.friction = 0.1
+        
+        self.explode_radius = 200
     
     def update(self):
         super().update()
@@ -216,6 +221,7 @@ class Ball(Animated):
             self.one_forces.append(0.8 * vec3(0, 0, abs(self.vel.z) * self.bounce_mult))
             self.vel.z = 0
             self.pos.z = 0
+            self.explode()
             
         do_rand = False
         if not(0 <= self.pos.x < size[0]):
@@ -232,7 +238,12 @@ class Ball(Animated):
         
         self.collide()
             
-
+    def explode(self):
+        print("AAAA")
+        for o in objects:
+            if type(o) == Player:
+                o.mass = max(0.1, o.mass*0.8)
+                
     def draw(self):
         super().draw()
     
@@ -255,6 +266,7 @@ black = (0, 0, 0)
 white = (255, 255, 255)
 green = (0, 255, 0)
 red   = (255, 0, 0)
+darkgreen= (150, 215, 140)
 
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Trijam 197")
@@ -294,7 +306,7 @@ while carryOn:
     should_split = False
 
     # --- Drawing code should go here
-    screen.fill(white)
+    screen.fill(darkgreen)
     for object in objects:
         object.draw()
     
