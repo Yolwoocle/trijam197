@@ -16,12 +16,16 @@ class Object:
         self.acc =  pygame.math.Vector3(0, 0, 0)
         self.forces = []
         self.friction = 0.7
+        self.gravity = 0
         self.mass = 2
 
     def update(self):
         self.acc = pygame.math.Vector3(0, 0, 0)
+        
         for f in self.forces:
             self.acc = self.acc + f
+        self.acc += self.gravity
+        
         if(self.vel.length()>0):
             # print((self.friction)*(self.vel.normalize()))
             self.acc -= self.friction * self.vel.normalize()*(self.vel.length()**2)
@@ -91,18 +95,14 @@ class Player(Animated):
         self.forces[0] = pygame.math.Vector3()
         if keys[pygame.K_LEFT]: # We can check if a key is pressed like this
             self.forces[0].x += -1
-            self.forces[0].y += 0
         
         if keys[pygame.K_RIGHT]:
             self.forces[0].x += 1
-            self.forces[0].y += 0
 
         if keys[pygame.K_UP]:
-            self.forces[0].x += 0
             self.forces[0].y += -1
 
         if keys[pygame.K_DOWN]:
-            self.forces[0].x += 0
             self.forces[0].y += 1
 
         if self.forces[0].length()>0:
@@ -114,17 +114,23 @@ class Player(Animated):
 
 
 class Ball(Animated):
-    def __init__(self, initSize=10):
+    def __init__(self, x, y, initSize=10):
+        super().__init__(x, y)
         self.size = initSize
         self.sprites = Image.balls
         self.sprite_offset = pygame.math.Vector2(0,0)
         self.forces = [pygame.math.Vector3()]
         
+        self.bounce_force = -30
+        
         self.mass = 10
     
     def update(self):
         super().update()
-        self.sprite_offset = pygame.math.Vector2(0, -self.altitude)
+        
+        self.forces[0] = pygame.math.Vector3()        
+        if self.pos.z < 0:
+            self.forces[0].z = -self.bounce_force
         
 
     def draw(self):
@@ -148,7 +154,8 @@ clock = pygame.time.Clock()
 
 # -------- Main Program Loop -----------
 objects = [
-    Player(size[0]/2, size[1]/2)
+    Player(size[0]/2, size[1]/2),
+    Ball(100, 100),
 ]
 
 while carryOn:
