@@ -93,8 +93,10 @@ class Animated(Object):
         
     def draw(self):
         if len(self.sprites)>self.current_sprite:            
-            self.shadow_spr = pygame.transform.scale(self.shadow_spr, (self.size.x, self.size.y))
-            screen.blit(self.shadow_spr, self.pos.xy - self.size/2 + vec2(0, 6))
+            # s = abs(1/max(1, self.pos.z ))
+            s = 1
+            self.shadow_spr = pygame.transform.scale(self.shadow_spr, (self.size.x * s, self.size.y * s))
+            screen.blit(self.shadow_spr, self.pos.xy - (self.size - vec2(0, 20))/2)
             
             self.sprites[self.current_sprite] = pygame.transform.scale(self.sprites[self.current_sprite], (self.size.x, self.size.y))
             screen.blit(self.sprites[self.current_sprite], self.pos.xy - pygame.math.Vector2(0, self.pos.z) + self.sprite_offset - self.size/2)
