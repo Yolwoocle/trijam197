@@ -1,4 +1,5 @@
 import pygame
+import random
 
 size = (700, 500)
 
@@ -103,7 +104,7 @@ class Player(Animated):
         self.sprites = [load_image(img) for img in Image.slimes]
 
         self.speed = 10
-        self.size = vec2(100, 100)
+        self.size = vec2(200, 200)
         self.forces = [pygame.math.Vector3(0,0,0)]
         self.input_rate = 5
 
@@ -145,7 +146,7 @@ class Player(Animated):
         # self.size /= 2
     
     def shrink(self):
-        self.size /= 2
+        self.size *= 0.8
 
 
 class Ball(Animated):
@@ -158,7 +159,7 @@ class Ball(Animated):
         self.sprite_offset = pygame.math.Vector2(0,0)
         self.forces = [pygame.math.Vector3()]
         
-        self.bounce_mult = 0.8
+        self.bounce_mult = 10
         
         self.gravity = pygame.math.Vector3(0, 0, -3)
         self.mass = 10
@@ -169,7 +170,7 @@ class Ball(Animated):
         
         # self.forces[0] = 
         if self.pos.z < 0:
-            self.one_forces[0].z = abs(self.vel.z) * self.bounce_mult
+            self.one_forces.append(0.8*vec3(0, 0, abs(self.vel.z) * self.bounce_mult))
             self.vel.z = 0
             self.pos.z = 0
             
@@ -233,9 +234,10 @@ while carryOn:
         balls.sort(key=lambda x: x.size.x)
         balls[-1].shrink()
         np = Player(balls[-1].pos.x, balls[-1].pos.y)
-        np.size = balls[-1].size
-        np.one_forces.append(vec3(10,0,0))
-        balls[-1].one_forces.append(vec3(-10,0,0))
+        np.size = vec2(balls[-1].size.x, balls[-1].size.y)
+        f = vec3(random.random(), random.random(), random.random()).normalize()*100
+        np.one_forces.append(f)
+        balls[-1].one_forces.append(-f)
         objects.append(np)
     
     should_split = False
