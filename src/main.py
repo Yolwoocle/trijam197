@@ -17,8 +17,10 @@ class Object:
         self.pos += self.vel 
 
 class Image:
-    test = load_image('img/test.png')
-
+    slimes = [
+        load_image('img/slime1.png'),
+        load_image('img/slime2.png'),
+    ]
 
 class Animated(Object):
     def __init__(self, x, y):
@@ -36,7 +38,7 @@ class Animated(Object):
 class Player(Animated):
     def __init__(self, x, y) -> None:
         super().__init__(x, y)
-        self.sprites = [Image.test]
+        self.sprites = Image.slimes
 
         self.image = Image.test
         self.friction = 0.97
