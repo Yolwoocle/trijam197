@@ -72,6 +72,7 @@ class Image:
     balls = [
         'img/ball1.png',
     ]
+    ball_shadow = 'img/ball1_shadow.png'
 
 class Animated(Object):
     def __init__(self, x, y):
@@ -144,6 +145,8 @@ class Ball(Animated):
     def __init__(self, x, y, initSize=10):
         super().__init__(x, y)
         self.sprites = [load_image(img) for img in Image.balls]
+        self.shadow_spr = load_image(Image.ball_shadow)
+        
         self.pos.z = 10
         self.sprite_offset = pygame.math.Vector2(0,0)
         self.forces = [pygame.math.Vector3()]
@@ -165,7 +168,9 @@ class Ball(Animated):
             
 
     def draw(self):
+        screen.blit(self.shadow_spr, self.pos.xy)
         super().draw()
+        
         
         text = font.render("pos="+str(self.pos), True, (0, 0, 0))
         textRect = text.get_rect()
