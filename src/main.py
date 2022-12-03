@@ -13,12 +13,15 @@ class Image:
 
 
 class Animated(Object):
-    def __init__(self):
+    def __init__(self, x, y):
+        super().__init__(x, y)
         self.advancement = 0
         self.sprites = []
+        self.current_sprite = 0
         
     def draw(self):
-        ...
+        if len(self.sprites)<self.current_sprite:
+            screen.blit(self.sprites[self.current_sprite], self.pos)
 
 
 class Player(Animated):
