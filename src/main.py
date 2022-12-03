@@ -218,8 +218,8 @@ clock = pygame.time.Clock()
 
 # -------- Main Program Loop -----------
 objects = [
-    Ball(100, 100),
     Player(size[0]/2, size[1]/2),
+    Ball(100, 100),
 ]
 font = pygame.font.Font('Roboto-Regular.ttf', 16)
 
@@ -229,12 +229,9 @@ while carryOn:
             carryOn = False
 
     # --- Game logic should go here
-    objects.sort(key = lambda x: x.pos.y)
-
     for object in objects:
         object.update()
     
-
     if should_split:
         balls = [o for o in objects if type(o)==Player]
         balls.sort(key=lambda x: x.size.x)
