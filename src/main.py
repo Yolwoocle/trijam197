@@ -181,7 +181,7 @@ objects = [
     Player(size[0]/2, size[1]/2),
     Ball(100, 100),
 ]
-font = pygame.font.Font('Roboto-Regular.ttf', 32)
+font = pygame.font.Font('Roboto-Regular.ttf', 16)
 
 while carryOn:
     for event in pygame.event.get():
