@@ -134,7 +134,7 @@ class Player(Animated):
         global split_lock
         super().update()
         
-        self.size = vec2(self.mass, self.mass) * 100
+        # self.size = vec2(self.mass, self.mass) * 100
 
         keys = pygame.key.get_pressed()
         self.forces[0] = pygame.math.Vector3()
@@ -185,7 +185,6 @@ class Player(Animated):
     def shrink(self):
         # self.life *= 0.8
         self.size *= 0.8
-        self.health -= 1
     
     def sploutch(self):
         self.scrouch = 1.8
@@ -243,7 +242,10 @@ class Ball(Animated):
         print("AAAA")
         for o in objects:
             if type(o) == Player:
-                o.mass = max(0.1, o.mass*0.8)
+                o.size.x -= 1
+                o.size.y -= 1
+            if o.size.x<=10:
+                objects.remove(o)
                 
     def draw(self):
         super().draw()
