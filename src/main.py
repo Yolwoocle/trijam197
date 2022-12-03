@@ -1,5 +1,36 @@
 import pygame 
 
+def load_image(path):
+    return pygame.image.load(path)
+
+class Object:
+    def __init__(self, x, y) -> None:
+        self.x = x
+        self.y = y
+
+
+class Image:
+    test = load_image('img/test.png')
+
+class Player(Object):
+    def __init__(self, x, y) -> None:
+        super().__init__(x, y)
+        self.sprite = 
+
+
+class Animated(Object):
+    def __init__(self):
+        self.advancement = 0
+        self.sprites = []
+
+class Ball(Object):
+    def __init__(self, initSize=10):
+        self.size = initSize
+    
+    def split(self):
+        self.size /= 2
+
+
 pygame.init()
 
 # Define some colors
@@ -19,6 +50,7 @@ carryOn = True
 # The clock will be used to control how fast the screen updates
 clock = pygame.time.Clock()
 
+<<<<<<< HEAD
 class Image:
     test = pygame.image.load('img/test.png')
 
@@ -32,6 +64,8 @@ class Player(Object):
         super().__init__(x, y)
         self.image = Image.test
 
+=======
+>>>>>>> 71dbcc6a34c0d8286d86d866035fafadd33a8379
 # -------- Main Program Loop -----------
 while carryOn:
     # --- Main event loop
