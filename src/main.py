@@ -1,4 +1,9 @@
-import pygame 
+import pygame
+
+size = (700, 500)
+
+limits = ((0, 0), (700, 500))
+
 
 def load_image(path):
     return pygame.image.load(path)
@@ -10,8 +15,8 @@ class Object:
         self.vel =  pygame.math.Vector2(0, 0)
         self.acc =  pygame.math.Vector2(0, 0)
         self.forces = []
-        self.friction = 0.9
-        self.mass = 10
+        self.friction = 0.7
+        self.mass = 2
 
     def update(self):
         self.acc = pygame.math.Vector2(0, 0)
@@ -21,9 +26,25 @@ class Object:
             # print((self.friction)*(self.vel.normalize()))
             self.acc -= self.friction * self.vel.normalize()*(self.vel.length()**2)
         self.vel += self.acc / self.mass
-        if(self.vel.length()<=0.1):
+
+        if self.vel.x>0:
+            if self.pos.x<limits[1][0]:
+                self.pos.x += self.vel.x
+        
+        if self.vel.x<0:
+            if self.pos.x>limits[0][0]:
+                self.pos.x += self.vel.x
+        
+        if self.vel.y>0:
+            if self.pos.y<limits[1][1]:
+                self.pos.y += self.vel.y
+
+        if self.vel.y<0:
+            if self.pos.y>limits[0][1]:
+                self.pos.y += self.vel.y
+        
+        if(self.vel.length()<=0.1 and self.acc.length()<=0.1):
             self.vel = pygame.math.Vector2(0, 0)
-        self.pos += self.vel
 
 class Image:
     slimes = [
@@ -57,6 +78,7 @@ class Player(Animated):
         self.friction = 0.97
         self.speed = 10
         self.forces = [pygame.math.Vector2(0, 0)]
+        self.input_rate = 5
 
     def update(self):
         super().update()
@@ -80,7 +102,8 @@ class Player(Animated):
             self.forces[0].y += 1
 
         if self.forces[0].length()>0:
-            self.forces[0].normalize_ip()        
+            self.forces[0].normalize_ip()
+            self.forces[0]*=self.input_rate        
 
     def draw(self):
         super().draw()
@@ -102,7 +125,6 @@ white = (255, 255, 255)
 green = (0, 255, 0)
 red   = (255, 0, 0)
 
-size = (700, 500)
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Trijam 197")
 
