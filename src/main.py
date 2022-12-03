@@ -176,8 +176,8 @@ class Ball(Animated):
             
 
     def draw(self):
-        self.shadow_spr = pygame.transform.scale(self.shadow_spr, (self.size.x, self.size.y))    
-        screen.blit(self.shadow_spr, self.pos.xy - self.size/2 + vec2(0, 6))
+        self.shadow_spr = pygame.transform.scale(self.shadow_spr, (self.size.x, self.size.y))
+        screen.blit(self.shadow_spr, self.pos.xy - self.size/2)
         super().draw()
         
         
