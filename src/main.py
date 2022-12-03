@@ -48,7 +48,7 @@ class Object:
                 self.pos.y += self.vel.y
         
         if(self.vel.length()<=0.1 and self.acc.length()<=0.1):
-            self.vel = pygame.math.Vector2(0, 0)
+            self.vel = pygame.math.Vector3()
 
 class Image:
     slimes = [
@@ -71,7 +71,7 @@ class Animated(Object):
     def draw(self):
         if len(self.sprites)>self.current_sprite:
             self.sprites[self.current_sprite] = pygame.transform.scale(self.sprites[self.current_sprite], (self.size.x, self.size.y))
-            screen.blit(self.sprites[self.current_sprite], self.pos + self.sprite_offset - self.size/2)
+            screen.blit(self.sprites[self.current_sprite], self.pos.xy - pygame.math.Vector2(0, self.pos.z) + self.sprite_offset - self.size/2)
             if self.elapsed > 10:
                 self.current_sprite=(self.current_sprite+1)%len(self.sprites)
                 self.elapsed = 0
