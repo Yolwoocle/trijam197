@@ -148,19 +148,20 @@ class Ball(Animated):
         self.sprite_offset = pygame.math.Vector2(0,0)
         self.forces = [pygame.math.Vector3()]
         
-        self.bounce_mult = 0.4
+        self.bounce_mult = 0.8
         
-        self.gravity = pygame.math.Vector3(0, 0, -9.81)
+        self.gravity = pygame.math.Vector3(0, 0, -3)
         self.mass = 10
-        self.friction = 0
+        self.friction = 0.1
     
     def update(self):
         super().update()
         
-        self.forces[0] = pygame.math.Vector3()        
-        # self.forces[0] = pygame.math.Vector3(20, 0, 100)
+        # self.forces[0] = 
         if self.pos.z < 0:
-            self.vel.z = abs(self.vel.z) * self.bounce_mult
+            self.one_forces[0].z = abs(self.vel.z) * self.bounce_mult
+            self.vel.z = 0
+            self.pos.z = 0
             
 
     def draw(self):
