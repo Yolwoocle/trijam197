@@ -7,6 +7,10 @@ limits = ((0, 0, -1000), (700, 500, 10000))
 vec2 = pygame.math.Vector2
 vec3 = pygame.math.Vector3
 
+objects = []
+should_split = False
+split_lock = False
+
 def load_image(path):
     return pygame.image.load(path)
 
@@ -17,7 +21,7 @@ class Object:
         self.vel =  pygame.math.Vector3(0, 0, 0)
         self.acc =  pygame.math.Vector3(0, 0, 0)
         self.forces = []
-        self.friction = 0.7
+        self.friction = 0.4
         self.gravity = pygame.math.Vector3()
         self.mass = 2
 
@@ -62,11 +66,11 @@ class Object:
 
 class Image:
     slimes = [
-        load_image('img/slime1.png'),
-        load_image('img/slime2.png'),
+        'img/slime1.png',
+        'img/slime2.png',
     ]
     balls = [
-        load_image('img/ball1.png'),
+        'img/ball1.png',
     ]
 
 class Animated(Object):
@@ -91,13 +95,15 @@ class Animated(Object):
 class Player(Animated):
     def __init__(self, x, y) -> None:
         super().__init__(x, y)
-        self.sprites = Image.slimes
+        self.sprites = [load_image(img) for img in Image.slimes]
 
         self.speed = 10
+        self.size = vec2(100, 100)
         self.forces = [pygame.math.Vector3(0,0,0)]
         self.input_rate = 5
 
     def update(self):
+        global split_lock
         super().update()
 
         keys = pygame.key.get_pressed()
@@ -113,6 +119,12 @@ class Player(Animated):
 
         if keys[pygame.K_DOWN]:
             self.forces[0].y += 1
+        
+        if keys[pygame.K_SPACE]:
+            if not split_lock: self.split()
+            split_lock = True
+        else:
+            split_lock = False
 
         if self.forces[0].length()>0:
             self.forces[0].normalize_ip()
@@ -120,14 +132,18 @@ class Player(Animated):
 
     def draw(self):
         super().draw()
+    
+    def split(self):
+        should_split = True
+        # objects.append(Player(self.size.x/2, self.size.y/2))
+        # self.size /= 2
 
 
 class Ball(Animated):
     def __init__(self, x, y, initSize=10):
         super().__init__(x, y)
+        self.sprites = [load_image(img) for img in Image.balls]
         self.pos.z = 10
-        
-        self.sprites = Image.balls
         self.sprite_offset = pygame.math.Vector2(0,0)
         self.forces = [pygame.math.Vector3()]
         
@@ -191,6 +207,15 @@ while carryOn:
     # --- Game logic should go here
     for object in objects:
         object.update()
+    
+    if should_split:
+        print("Should split!")
+        balls = [o for o in objects if type(o)==Player]
+        balls.sort(key=lambda x, y: x.size.x<size.size.y)
+        balls[0].size /= 2
+        objects.append(Player(balls[0].size.x, balls[0].size.y))
+    
+    should_split = False
 
     # --- Drawing code should go here
     screen.fill(white)
