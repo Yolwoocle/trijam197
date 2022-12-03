@@ -136,8 +136,14 @@ class Player(Animated):
             self.forces[0].normalize_ip()
             self.forces[0]*=self.input_rate
         
+        self.collide()
+        
         if random.random()>0.9:
             self.forces[1] = vec3(random.random()-0.5, random.random()-0.5, random.random()-0.5).normalize()*random.random()*0.2
+    
+    def collide(self):
+        others = [o for o in objects if o!=self and type(o)==Player]
+        if (others.pos)
 
     def draw(self):
         super().draw()
@@ -171,7 +177,6 @@ class Ball(Animated):
     def update(self):
         super().update()
         
-        # self.forces[0] = 
         if self.pos.z < 0:
             self.one_forces.append(0.8*vec3(0, 0, abs(self.vel.z) * self.bounce_mult))
             self.vel.z = 0
