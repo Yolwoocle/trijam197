@@ -12,16 +12,18 @@ class Object:
 class Image:
     test = load_image('img/test.png')
 
-class Player(Object):
-    def __init__(self, x, y) -> None:
-        super().__init__(x, y)
-        self.image = Image.test
 
 
 class Animated(Object):
     def __init__(self):
         self.advancement = 0
         self.sprites = []
+
+
+class Player(Animated):
+    def __init__(self, x, y) -> None:
+        super().__init__(x, y)
+        self.image = Image.test
 
 class Ball(Object):
     def __init__(self, initSize=10):
@@ -34,10 +36,10 @@ class Ball(Object):
 pygame.init()
 
 # Define some colors
-BLACK = ( 0, 0, 0)
-WHITE = ( 255, 255, 255)
-GREEN = ( 0, 255, 0)
-RED = ( 255, 0, 0)
+black = ( 0, 0, 0)
+white = ( 255, 255, 255)
+green = ( 0, 255, 0)
+red   = ( 255, 0, 0)
 
 # Open a new window
 size = (700, 500)
