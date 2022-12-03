@@ -54,9 +54,11 @@ class Player(Animated):
 
         if keys[pygame.K_DOWN]:
             direction.y = 1
-        direction.normalize()
+            
+        if direction.length() > 0:
+            direction.normalize()
         
-        vel += direction * self.speed
+        self.acc = direction * self.speed
 
 
     def draw(self):
