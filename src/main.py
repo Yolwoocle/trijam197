@@ -2,7 +2,7 @@ import pygame
 
 size = (700, 500)
 
-limits = ((0, 0), (700, 500))
+limits = ((0, 0, -1000), (700, 500, 10000))
 
 
 def load_image(path):
@@ -16,15 +16,14 @@ class Object:
         self.acc =  pygame.math.Vector3(0, 0, 0)
         self.forces = []
         self.friction = 0.7
-        self.mass = 2
+        self.mass = 5
 
     def update(self):
         self.acc = pygame.math.Vector3(0, 0, 0)
         for f in self.forces:
             self.acc = self.acc + f
         if(self.vel.length()>0):
-            # print((self.friction)*(self.vel.normalize()))
-            self.acc -= self.friction * self.vel.normalize()*(self.vel.length()**2)
+            self.acc -= self.friction * self.vel.normalize()*(self.vel.length()**1.2)
         self.vel += self.acc / self.mass
 
         if self.vel.x>0:
@@ -42,6 +41,15 @@ class Object:
         if self.vel.y<0:
             if self.pos.y>limits[0][1]:
                 self.pos.y += self.vel.y
+        
+        if self.vel.z<0:
+            if self.pos.z>limits[0][2]:
+                self.pos.z += self.vel.z
+        
+        if self.vel.z>0:
+            if self.pos.z>limits[1][2]:
+                self.pos.z += self.vel.z
+        
         
         if(self.vel.length()<=0.1 and self.acc.length()<=0.1):
             self.vel = pygame.math.Vector3()
@@ -79,7 +87,6 @@ class Player(Animated):
         super().__init__(x, y)
         self.sprites = Image.slimes
 
-        self.friction = 0.97
         self.speed = 10
         self.forces = [pygame.math.Vector3(0,0,0)]
         self.input_rate = 5
@@ -107,7 +114,7 @@ class Player(Animated):
 
         if self.forces[0].length()>0:
             self.forces[0].normalize_ip()
-            self.forces[0]*=self.input_rate        
+            self.forces[0]*=self.input_rate
 
     def draw(self):
         super().draw()
