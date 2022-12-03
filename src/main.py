@@ -24,13 +24,13 @@ class Image:
 
 class Object:
     def __init__(self, x, y) -> None:
-        self.x = x
-        self.y = y
+        self.pos = pygame.math.Vector2(x, y)
+        self.vel = pygame.math.Vector2(0, 0)
 
 class Player(Object):
     def __init__(self, x, y) -> None:
         super().__init__(x, y)
-        self.sprite = 
+        self.image = Image.test
 
 # -------- Main Program Loop -----------
 while carryOn:
