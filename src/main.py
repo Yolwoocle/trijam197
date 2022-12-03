@@ -80,7 +80,7 @@ while carryOn:
 
     # --- Drawing code should go here
     for object in objects:
-        screen.fill(WHITE)
+        screen.fill(white)
         object.draw()
     
     pygame.display.flip()
