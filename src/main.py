@@ -9,9 +9,12 @@ class Object:
         self.size = pygame.math.Vector2(50, 50)
         self.vel =  pygame.math.Vector2(0, 0)
         self.acc =  pygame.math.Vector2(0, 0)
+        self.friction = 1
 
     def update(self):
-        self.pos += self.vel * self.friction
+        self.acc *= self.friction
+        self.vel += self.acc
+        self.pos += self.vel 
 
 class Image:
     test = load_image('img/test.png')
@@ -59,8 +62,7 @@ class Player(Animated):
         if direction.length() > 0:
             direction.normalize()
         
-        self.acc = direction * self.speed
-
+        self.acc = direction
 
     def draw(self):
         super().draw()
