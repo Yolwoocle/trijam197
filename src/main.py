@@ -94,7 +94,6 @@ class Player(Animated):
         self.sprites = Image.slimes
 
         self.speed = 10
-        self.size = 
         self.forces = [pygame.math.Vector3(0,0,0)]
         self.input_rate = 5
 
@@ -126,28 +125,40 @@ class Player(Animated):
 class Ball(Animated):
     def __init__(self, x, y, initSize=10):
         super().__init__(x, y)
-        self.pos.z = -30
+        self.pos.z = 10
         
-        self.size = initSize
         self.sprites = Image.balls
         self.sprite_offset = pygame.math.Vector2(0,0)
         self.forces = [pygame.math.Vector3()]
         
         self.bounce_mult = 0.4
         
-        self.gravity(0, 0, -9.81)
+        self.gravity = pygame.math.Vector3(0, 0, -9.81)
         self.mass = 10
+        
     
     def update(self):
         super().update()
         
-        self.forces[0] = pygame.math.Vector3()        
+        # self.forces[0] = pygame.math.Vector3()        
         if self.pos.z < 0:
-            self.forces[0].z = -self.vel.z * self.bounce_mult
-        
+            self.forces[0].z = 100
+            # self.vel.z = abs(self.vel.z) * self.bounce_mult
+            
 
     def draw(self):
         super().draw()
+        
+        text = font.render(str(self.pos), True, (0, 0, 0))
+        textRect = text.get_rect()
+        textRect.center = (self.pos.x + 50, self.pos.y)
+        screen.blit(text, textRect)
+    
+        text = font.render(str(self.vel), True, (0, 0, 0))
+        textRect = text.get_rect()
+        textRect.center = (self.pos.x + 50, self.pos.y + 50)
+        screen.blit(text, textRect)
+
 
 
 pygame.init()
@@ -170,6 +181,7 @@ objects = [
     Player(size[0]/2, size[1]/2),
     Ball(100, 100),
 ]
+font = pygame.font.Font('Roboto-Regular.ttf', 32)
 
 while carryOn:
     for event in pygame.event.get():
