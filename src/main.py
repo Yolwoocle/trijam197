@@ -149,7 +149,6 @@ class Player(Animated):
     
     def collide(self):
         others = [o for o in objects if o!=self and type(o)==Player]
-        if (others.pos)
 
     def draw(self):
         super().draw()
@@ -173,6 +172,12 @@ class Ball(Animated):
         self.sprite_offset = pygame.math.Vector2(0,0)
         self.forces = [pygame.math.Vector3()]
         
+        rand_ang = math.pi/4 + (math.pi/2) * random.randint(0,3)
+        spd = 5 + random.random() * 3
+        self.vel.x = math.cos(rand_ang) * spd
+        self.vel.y = math.sin(rand_ang) * spd
+        self.vel.z = 20
+        
         self.bounce_mult = 10
         
         # self.gravity = pygame.math.Vector3(0, 0, -3)
@@ -183,7 +188,7 @@ class Ball(Animated):
         super().update()
         
         if self.pos.z < 0:
-            self.one_forces.append(0.8*vec3(0, 0, abs(self.vel.z) * self.bounce_mult))
+            self.one_forces.append(0.8 * vec3(0, 0, abs(self.vel.z) * self.bounce_mult))
             self.vel.z = 0
             self.pos.z = 0
             
