@@ -40,7 +40,6 @@ class Player(Animated):
     def draw(self):
         super().draw()
 
-        
 
 class Ball(Animated):
     def __init__(self, initSize=10):
