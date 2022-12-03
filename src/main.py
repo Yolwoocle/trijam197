@@ -176,8 +176,7 @@ class Ball(Animated):
             
 
     def draw(self):
-        self.shadow_spr = pygame.transform.scale(self.shadow_spr, (self.size.x, self.size.y))    
-        screen.blit(self.shadow_spr, self.pos.xy - self.size/2 + vec2(0, 6))
+        screen.blit(self.shadow_spr, self.pos.xy)
         super().draw()
         
         
@@ -215,8 +214,8 @@ clock = pygame.time.Clock()
 
 # -------- Main Program Loop -----------
 objects = [
-    Player(size[0]/2, size[1]/2),
     Ball(100, 100),
+    Player(size[0]/2, size[1]/2),
 ]
 font = pygame.font.Font('Roboto-Regular.ttf', 16)
 
@@ -226,9 +225,12 @@ while carryOn:
             carryOn = False
 
     # --- Game logic should go here
+    objects.sort(key = lambda x: x.pos.y)
+
     for object in objects:
         object.update()
     
+
     if should_split:
         balls = [o for o in objects if type(o)==Player]
         balls.sort(key=lambda x: x.size.x)
