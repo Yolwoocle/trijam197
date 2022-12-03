@@ -29,6 +29,7 @@ class Object:
         self.friction = 0.4
         self.gravity = pygame.math.Vector3(0, 0, -3)
         self.mass = 2
+        self.deleteme = False
 
     def update(self):
         self.acc = pygame.math.Vector3(0, 0, 0)
@@ -101,10 +102,10 @@ class Animated(Object):
         if len(self.sprites)>self.current_sprite:            
             # s = abs(1/max(1, self.pos.z ))
             s = 1
-            self.shadow_spr = pygame.transform.scale(self.shadow_spr, (self.size.x * s, self.size.y * s))
+            self.shadow_spr = pygame.transform.scale(load_image(Image.ball_shadow), (self.size.x * s, self.size.y * s))
             screen.blit(self.shadow_spr, self.pos.xy - (self.size - vec2(0, 20))/2)
             
-            self.sprites[self.current_sprite] = pygame.transform.scale(self.sprites[self.current_sprite], (self.scrouch*self.size.x, 1/self.scrouch*self.size.y))
+            self.sprites[self.current_sprite] = pygame.transform.scale(self.osprites[self.current_sprite], (self.scrouch*self.size.x, 1/self.scrouch*self.size.y))
             screen.blit(self.sprites[self.current_sprite], self.pos.xy - pygame.math.Vector2(0, self.pos.z) + self.sprite_offset - vec2(self.scrouch*self.size.x, 1/self.scrouch*self.size.y)/2)
             if self.elapsed > 10:
                 self.current_sprite=(self.current_sprite+1)%len(self.sprites)
@@ -123,6 +124,7 @@ class Player(Animated):
     def __init__(self, x, y) -> None:
         super().__init__(x, y)
         self.sprites = [load_image(img) for img in Image.slimes]
+        self.osprites = [load_image(img) for img in Image.slimes]
 
         self.speed = 10
         self.size = vec2(200, 200)
@@ -195,6 +197,7 @@ class Ball(Animated):
     def __init__(self, x, y, initSize=10):
         super().__init__(x, y)
         self.sprites = [load_image(img) for img in Image.balls]
+        self.osprites = [load_image(img) for img in Image.balls]
         
         self.pos.z = 10
         self.sprite_offset = pygame.math.Vector2(0,0)
@@ -242,17 +245,20 @@ class Ball(Animated):
         print("AAAA")
         for o in objects:
             if type(o) == Player:
-                o.mass = max(0.1, o.mass*0.8)
+                o.mass = max(0, o.mass*0.8)
                 
     def draw(self):
         super().draw()
     
     def collide(self):
+        global score
+        
         slimes = [o for o in objects if type(o)==Player]
         for slime in slimes:
             if (slime.pos-self.pos).length()<(self.size.x/2+slime.size.x/2)*1.2:
                 self.one_forces.append(vec3(-self.vel.x+(2*random.random()-1)*5, -self.vel.y+(2*random.random()-1)*bounce_spread, 100))
                 slime.sploutch()
+                score += 1
                 return
 
 
@@ -277,7 +283,8 @@ objects = [
     Player(size[0]/2, size[1]/2),
     Ball(100, 100),
 ]
-font = pygame.font.Font('Roboto-Regular.ttf', 16)
+font = pygame.font.Font('Roboto-Regular.ttf', 128)
+
 
 while carryOn:
     for event in pygame.event.get():
@@ -286,9 +293,17 @@ while carryOn:
     
     objects.sort(key = lambda x: x.pos.y)
     # --- Game logic should go here
+    i = 0
     for object in objects:
         object.update()
-    
+        if object.size.x < 0.3:
+            object.deleteme = True
+        
+    for object in objects:
+        if object.deleteme:
+            objects.pop(i)
+        i+=1
+        
     if should_split:
         balls = [o for o in objects if type(o)==Player]
         balls.sort(key=lambda x: x.size.x)
