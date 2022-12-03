@@ -52,6 +52,7 @@ carryOn = True
 # The clock will be used to control how fast the screen updates
 clock = pygame.time.Clock()
 
+player = Player(size[0]/2, size[1]/2)
 
 # -------- Main Program Loop -----------
 while carryOn:
@@ -60,16 +61,11 @@ while carryOn:
         if event.type == pygame.QUIT: # If user clicked close
             carryOn = False # Flag that we are done so we can exit the while loop
 
-    # --- Game logic should go here
-
     # --- Drawing code should go here
     # First, clear the screen to white. 
     screen.fill(white)
     #The you can draw different shapes and lines or add text to your background stage.
-    pygame.draw.rect(screen, red, [55, 200, 100, 70],0)
-    pygame.draw.line(screen, green, [0, 0], [100, 100], 5)
-    pygame.draw.ellipse(screen, black, [20,20,250,100], 2)
-
+    player.draw()
 
     # --- Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
