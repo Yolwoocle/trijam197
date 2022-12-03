@@ -149,6 +149,11 @@ class Player(Animated):
     
     def collide(self):
         others = [o for o in objects if o!=self and type(o)==Player]
+        for other in others:
+            if (other.pos-self.pos).length()<(self.size.x/2+other.size.x/2)*0.6:
+                normal = (other.pos-self.pos).normalize()*10
+                other.one_forces.append(normal)
+                self.one_forces.append(-normal)
 
     def draw(self):
         super().draw()
@@ -161,6 +166,7 @@ class Player(Animated):
     
     def shrink(self):
         self.size *= 0.8
+        self.mass *= 0.8
 
 
 class Ball(Animated):
@@ -208,22 +214,6 @@ class Ball(Animated):
 
     def draw(self):
         super().draw()
-        
-        text = font.render("pos="+str(self.pos), True, (0, 0, 0))
-        textRect = text.get_rect()
-        textRect.center = (150, 100)
-        screen.blit(text, textRect)
-    
-        text = font.render("vel="+str(self.vel), True, (0, 0, 0))
-        textRect = text.get_rect()
-        textRect.center = (150, 130)
-        screen.blit(text, textRect)
-    
-        text = font.render("acc="+str(self.acc), True, (0, 0, 0))
-        textRect = text.get_rect()
-        textRect.center = (150, 160)
-        screen.blit(text, textRect)
-
 
 
 pygame.init()
@@ -252,7 +242,8 @@ while carryOn:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             carryOn = False
-
+    
+    objects.sort(key = lambda x: x.pos.y)
     # --- Game logic should go here
     for object in objects:
         object.update()
