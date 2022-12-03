@@ -54,24 +54,17 @@ clock = pygame.time.Clock()
 
 player = Player(size[0]/2, size[1]/2)
 
-# -------- Main Program Loop -----------
 while carryOn:
-    # --- Main event loop
-    for event in pygame.event.get(): # User did something
-        if event.type == pygame.QUIT: # If user clicked close
-            carryOn = False # Flag that we are done so we can exit the while loop
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            carryOn = False
 
-    # --- Drawing code should go here
-    # First, clear the screen to white. 
     screen.fill(white)
-    #The you can draw different shapes and lines or add text to your background stage.
+    
     player.draw()
 
-    # --- Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
 
-    # --- Limit to 60 frames per second
     clock.tick(60)
 
-#Once we have exited the main program loop we can stop the game engine:
 pygame.quit()
