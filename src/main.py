@@ -150,29 +150,34 @@ class Ball(Animated):
         self.bounce_mult = 0.4
         
         self.gravity = pygame.math.Vector3(0, 0, -9.81)
-        self.mass = 10
+        self.mass = 1
         
     
     def update(self):
         super().update()
         
-        # self.forces[0] = pygame.math.Vector3()        
+        self.forces[0] = pygame.math.Vector3()        
+        # self.forces[0] = pygame.math.Vector3(20, 0, 100)
         if self.pos.z < 0:
-            self.forces[0].z = 100
-            # self.vel.z = abs(self.vel.z) * self.bounce_mult
+            self.vel.z = abs(self.vel.z) * self.bounce_mult
             
 
     def draw(self):
         super().draw()
         
-        text = font.render(str(self.pos), True, (0, 0, 0))
+        text = font.render("pos="+str(self.pos), True, (0, 0, 0))
         textRect = text.get_rect()
-        textRect.center = (self.pos.x + 50, self.pos.y)
+        textRect.center = (150, 100)
         screen.blit(text, textRect)
     
-        text = font.render(str(self.vel), True, (0, 0, 0))
+        text = font.render("vel="+str(self.vel), True, (0, 0, 0))
         textRect = text.get_rect()
-        textRect.center = (self.pos.x + 50, self.pos.y + 50)
+        textRect.center = (150, 130)
+        screen.blit(text, textRect)
+    
+        text = font.render("acc="+str(self.acc), True, (0, 0, 0))
+        textRect = text.get_rect()
+        textRect.center = (150, 160)
         screen.blit(text, textRect)
 
 
