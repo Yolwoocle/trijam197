@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 
 size = (1000, 800)
 
@@ -87,9 +88,14 @@ class Animated(Object):
         self.current_sprite = 0
         self.elapsed = 0
         self.sprite_offset = pygame.math.Vector2(0,0)
+        self.shadow_spr = load_image(Image.ball_shadow)
+        
         
     def draw(self):
-        if len(self.sprites)>self.current_sprite:
+        if len(self.sprites)>self.current_sprite:            
+            self.shadow_spr = pygame.transform.scale(self.shadow_spr, (self.size.x, self.size.y))
+            screen.blit(self.shadow_spr, self.pos.xy - self.size/2)
+            
             self.sprites[self.current_sprite] = pygame.transform.scale(self.sprites[self.current_sprite], (self.size.x, self.size.y))
             screen.blit(self.sprites[self.current_sprite], self.pos.xy - pygame.math.Vector2(0, self.pos.z) + self.sprite_offset - self.size/2)
             if self.elapsed > 10:
@@ -167,11 +173,16 @@ class Ball(Animated):
     def __init__(self, x, y, initSize=10):
         super().__init__(x, y)
         self.sprites = [load_image(img) for img in Image.balls]
-        self.shadow_spr = load_image(Image.ball_shadow)
         
         self.pos.z = 10
         self.sprite_offset = pygame.math.Vector2(0,0)
         self.forces = [pygame.math.Vector3()]
+        
+        rand_ang = math.pi/4 + (math.pi/2) * random.randint(0,3)
+        spd = 5 + random.random() * 3
+        self.vel.x = math.cos(rand_ang) * spd
+        self.vel.y = math.sin(rand_ang) * spd
+        self.vel.z = 20
         
         self.bounce_mult = 10
         
@@ -183,14 +194,25 @@ class Ball(Animated):
         super().update()
         
         if self.pos.z < 0:
-            self.one_forces.append(0.8*vec3(0, 0, abs(self.vel.z) * self.bounce_mult))
+            self.one_forces.append(0.8 * vec3(0, 0, abs(self.vel.z) * self.bounce_mult))
             self.vel.z = 0
             self.pos.z = 0
             
+        do_rand = False
+        if not(0 <= self.pos.x < size[0]):
+            self.vel.x *= -1
+        if not(0 <= self.pos.y < size[1]):
+            self.vel.y *= -1
+        
+        if do_rand:
+            ang = math.atan2(self.vel.y, self.vel.x)
+            ang += (random.random() - 0.5) * 0.1
+            norm = self.vel.length()
+            self.vel.x = norm * math.cos(ang)
+            self.vel.y = norm * math.sin(ang)
+            
 
     def draw(self):
-        self.shadow_spr = pygame.transform.scale(self.shadow_spr, (self.size.x, self.size.y))
-        screen.blit(self.shadow_spr, self.pos.xy - self.size/2)
         super().draw()
 
 
