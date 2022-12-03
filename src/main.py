@@ -164,12 +164,10 @@ class Ball(Animated):
     def update(self):
         super().update()
         
-        # self.forces[0] = pygame.math.Vector3()        
+        self.forces[0] = pygame.math.Vector3()        
+        # self.forces[0] = pygame.math.Vector3(20, 0, 100)
         if self.pos.z < 0:
-            self.forces[0].z = -0.001
-        else:
-            self.forces[0].z = 0
-            # self.vel.z = abs(self.vel.z) * self.bounce_mult
+            self.vel.z = abs(self.vel.z) * self.bounce_mult
             
 
     def draw(self):
