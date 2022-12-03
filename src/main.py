@@ -4,7 +4,7 @@ import math
 
 size = (1000, 800)
 
-limits = ((0, 0, -10), (size[0], size[1], 10000))
+limits = ((50, 50, -10), (size[0]-50, size[1]-50, 10000))
 
 vec2 = pygame.math.Vector2
 vec3 = pygame.math.Vector3
@@ -12,6 +12,8 @@ vec3 = pygame.math.Vector3
 objects = []
 should_split = False
 split_lock = False
+bounce_spread = 40
+score = 0
 
 def load_image(path):
     return pygame.image.load(path)
@@ -66,6 +68,8 @@ class Object:
             if self.pos.z<limits[1][2]:
                 self.pos.z += self.vel.z
         
+        self.pos.z = max(0, self.pos.z)
+        
         
         if(self.vel.length()<=0.1 and self.acc.length()<=0.1):
             self.vel = pygame.math.Vector3()
@@ -87,8 +91,10 @@ class Animated(Object):
         self.sprites = []
         self.current_sprite = 0
         self.elapsed = 0
+        self.selapsed = 0
         self.sprite_offset = pygame.math.Vector2(0,0)
         self.shadow_spr = load_image(Image.ball_shadow)
+        self.scrouch = 1
         
         
     def draw(self):
@@ -98,13 +104,20 @@ class Animated(Object):
             self.shadow_spr = pygame.transform.scale(self.shadow_spr, (self.size.x * s, self.size.y * s))
             screen.blit(self.shadow_spr, self.pos.xy - (self.size - vec2(0, 20))/2)
             
-            self.sprites[self.current_sprite] = pygame.transform.scale(self.sprites[self.current_sprite], (self.size.x, self.size.y))
-            screen.blit(self.sprites[self.current_sprite], self.pos.xy - pygame.math.Vector2(0, self.pos.z) + self.sprite_offset - self.size/2)
+            self.sprites[self.current_sprite] = pygame.transform.scale(self.sprites[self.current_sprite], (self.scrouch*self.size.x, 1/self.scrouch*self.size.y))
+            screen.blit(self.sprites[self.current_sprite], self.pos.xy - pygame.math.Vector2(0, self.pos.z) + self.sprite_offset - vec2(self.scrouch*self.size.x, 1/self.scrouch*self.size.y)/2)
             if self.elapsed > 10:
                 self.current_sprite=(self.current_sprite+1)%len(self.sprites)
                 self.elapsed = 0
             else:
                 self.elapsed += 1
+            
+            if self.selapsed > 2:
+                self.scrouch = max(1, (self.scrouch-1)*0.5+1)
+                self.selapsed = 0
+            else:
+                self.selapsed +=1
+
 
 class Player(Animated):
     def __init__(self, x, y) -> None:
@@ -172,6 +185,10 @@ class Player(Animated):
         self.life *= 0.8
         self.size *= 0.8
         self.mass *= 0.8
+    
+    def sploutch(self):
+        self.scrouch = 1.8
+
 
 
 class Ball(Animated):
@@ -218,6 +235,8 @@ class Ball(Animated):
             norm = self.vel.length()
             self.vel.x = norm * math.cos(ang)
             self.vel.y = norm * math.sin(ang)
+        
+        self.collide()
             
     def explode(self):
         print("AAAA")
@@ -227,6 +246,14 @@ class Ball(Animated):
                 
     def draw(self):
         super().draw()
+    
+    def collide(self):
+        slimes = [o for o in objects if type(o)==Player]
+        for slime in slimes:
+            if (slime.pos-self.pos).length()<(self.size.x/2+slime.size.x/2)*1.2:
+                self.one_forces.append(vec3(-self.vel.x+(2*random.random()-1)*5, -self.vel.y+(2*random.random()-1)*bounce_spread, 100))
+                slime.sploutch()
+                return
 
 
 pygame.init()
@@ -280,6 +307,9 @@ while carryOn:
     for object in objects:
         object.draw()
     
+    img = font.render(str(score), True, black)
+    screen.blit(img, (10, 10))
+
     pygame.display.flip()
 
     clock.tick(60)
