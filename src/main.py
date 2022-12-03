@@ -221,6 +221,8 @@ class Ball(Animated):
         self.vel.z = 20
         
         self.bounce_mult = 10
+
+        # self.gravity = vec3(0,0,-1)
         
         # self.gravity = pygame.math.Vector3(0, 0, -3)
         self.mass = 10
