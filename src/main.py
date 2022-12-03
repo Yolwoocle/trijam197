@@ -17,11 +17,20 @@ class Player(Object):
         super().__init__(x, y)
         self.image = Image.test
 
+    def update(self):
+        ...
+    
+    def draw(self):
+        super().draw()
+
 
 class Animated(Object):
     def __init__(self):
         self.advancement = 0
         self.sprites = []
+        
+    def draw(self):
+        ...
 
 class Ball(Object):
     def __init__(self, initSize=10):
@@ -52,6 +61,8 @@ clock = pygame.time.Clock()
 
 
 # -------- Main Program Loop -----------
+objects = []
+
 while carryOn:
     # --- Main event loop
     for event in pygame.event.get(): # User did something
@@ -59,14 +70,19 @@ while carryOn:
             carryOn = False # Flag that we are done so we can exit the while loop
 
     # --- Game logic should go here
+    for object in objects:
+        object.update()
+
 
     # --- Drawing code should go here
+    for object in objects:
+        screen.fill(WHITE)
+        object.draw()
     # First, clear the screen to white. 
-    screen.fill(WHITE)
     #The you can draw different shapes and lines or add text to your background stage.
-    pygame.draw.rect(screen, RED, [55, 200, 100, 70],0)
-    pygame.draw.line(screen, GREEN, [0, 0], [100, 100], 5)
-    pygame.draw.ellipse(screen, BLACK, [20,20,250,100], 2)
+    # pygame.draw.rect(screen, RED, [55, 200, 100, 70],0)
+    # pygame.draw.line(screen, GREEN, [0, 0], [100, 100], 5)
+    # pygame.draw.ellipse(screen, BLACK, [20,20,250,100], 2)
 
 
     # --- Go ahead and update the screen with what we've drawn.
