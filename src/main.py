@@ -2,7 +2,7 @@ import pygame
 
 size = (700, 500)
 
-limits = ((0, 0, -100000), (700, 500, 10000))
+limits = ((0, 0, -10), (700, 500, 10000))
 
 vec2 = pygame.math.Vector2
 vec3 = pygame.math.Vector3
@@ -21,6 +21,7 @@ class Object:
         self.vel =  pygame.math.Vector3(0, 0, 0)
         self.acc =  pygame.math.Vector3(0, 0, 0)
         self.forces = []
+        self.one_forces = []
         self.friction = 0.4
         self.gravity = pygame.math.Vector3()
         self.mass = 2
@@ -30,6 +31,9 @@ class Object:
         
         for f in self.forces:
             self.acc = self.acc + f
+        for f in self.one_forces:
+            self.acc = self.acc + f
+        self.one_forces = []
         self.acc += self.gravity
         
         if(self.vel.length()>0):
@@ -138,6 +142,9 @@ class Player(Animated):
         should_split = True
         # objects.append(Player(self.size.x/2, self.size.y/2))
         # self.size /= 2
+    
+    def shrink(self):
+        self.size /= 2
 
 
 class Ball(Animated):
@@ -152,30 +159,21 @@ class Ball(Animated):
         
         self.gravity = pygame.math.Vector3(0, 0, -9.81)
         self.mass = 10
-        self.friction = 0
+        self.friction = 0.1
     
     def update(self):
         super().update()
         
         # self.forces[0] = pygame.math.Vector3()        
         if self.pos.z < 0:
-            self.forces[0].z = 100
+            self.forces[0].z = -0.001
+        else:
+            self.forces[0].z = 0
             # self.vel.z = abs(self.vel.z) * self.bounce_mult
             
 
     def draw(self):
         super().draw()
-        
-        text = font.render(str(self.pos), True, (0, 0, 0))
-        textRect = text.get_rect()
-        textRect.center = (self.pos.x + 50, self.pos.y)
-        screen.blit(text, textRect)
-    
-        text = font.render(str(self.vel), True, (0, 0, 0))
-        textRect = text.get_rect()
-        textRect.center = (self.pos.x + 50, self.pos.y + 50)
-        screen.blit(text, textRect)
-
 
 
 pygame.init()
@@ -214,7 +212,11 @@ while carryOn:
         balls = [o for o in objects if type(o)==Player]
         balls.sort(key=lambda x: x.size.x)
         balls[-1].shrink()
-        objects.append(Player(balls[-1].size.x, balls[-1].size.y))
+        np = Player(balls[-1].pos.x, balls[-1].pos.y)
+        np.size = balls[-1].size
+        np.one_forces.append(vec3(10,0,0))
+        balls[-1].one_forces.append(vec3(-10,0,0))
+        objects.append(np)
     
     should_split = False
 
