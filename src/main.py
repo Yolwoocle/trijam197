@@ -10,17 +10,19 @@ class Object:
         self.vel =  pygame.math.Vector2(0, 0)
         self.acc =  pygame.math.Vector2(0, 0)
         self.forces = []
-        self.friction = 0
+        self.friction = 0.9
         self.mass = 10
 
     def update(self):
         self.acc = pygame.math.Vector2(0, 0)
         for f in self.forces:
             self.acc = self.acc + f
-        # if(self.vel.length()>0):
+        if(self.vel.length()>0):
             # print((self.friction)*(self.vel.normalize()))
-            # self.acc -= (self.friction)*(self.vel.normalize())
+            self.acc -= self.friction * self.vel.normalize()*(self.vel.length()**2)
         self.vel += self.acc / self.mass
+        if(self.vel.length()<=0.1):
+            self.vel = pygame.math.Vector2(0, 0)
         self.pos += self.vel
 
 class Image:
@@ -35,19 +37,23 @@ class Animated(Object):
         self.advancement = 0
         self.sprites = []
         self.current_sprite = 0
+        self.elapsed = 0
         
     def draw(self):
         if len(self.sprites)>self.current_sprite:
             self.sprites[self.current_sprite] = pygame.transform.scale(self.sprites[self.current_sprite], (self.size.x, self.size.y))
             screen.blit(self.sprites[self.current_sprite], self.pos-self.size/2)
-
+            if self.elapsed > 10:
+                self.current_sprite=(self.current_sprite+1)%len(self.sprites)
+                self.elapsed = 0
+            else:
+                self.elapsed += 1
 
 class Player(Animated):
     def __init__(self, x, y) -> None:
         super().__init__(x, y)
         self.sprites = Image.slimes
 
-        self.image = Image.test
         self.friction = 0.97
         self.speed = 10
         self.forces = [pygame.math.Vector2(0, 0)]
