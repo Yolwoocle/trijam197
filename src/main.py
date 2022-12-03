@@ -5,17 +5,17 @@ def load_image(path):
 
 class Object:
     def __init__(self, x, y) -> None:
-        self.x = x
-        self.y = y
+        self.pos = pygame.math.Vector2(x, y)
+        self.vel = pygame.math.Vector2(0, 0)
 
 
 class Image:
-    test = load_image('img/test.png')
+    test = pygame.image.load('img/test.png')
 
 class Player(Object):
     def __init__(self, x, y) -> None:
         super().__init__(x, y)
-        self.sprite = 
+        self.image = Image.test
 
 
 class Animated(Object):
@@ -50,22 +50,7 @@ carryOn = True
 # The clock will be used to control how fast the screen updates
 clock = pygame.time.Clock()
 
-<<<<<<< HEAD
-class Image:
-    test = pygame.image.load('img/test.png')
 
-class Object:
-    def __init__(self, x, y) -> None:
-        self.pos = pygame.math.Vector2(x, y)
-        self.vel = pygame.math.Vector2(0, 0)
-
-class Player(Object):
-    def __init__(self, x, y) -> None:
-        super().__init__(x, y)
-        self.image = Image.test
-
-=======
->>>>>>> 71dbcc6a34c0d8286d86d866035fafadd33a8379
 # -------- Main Program Loop -----------
 while carryOn:
     # --- Main event loop
