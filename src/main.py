@@ -9,7 +9,7 @@ class Object:
         self.size = pygame.math.Vector2(50, 50)
         self.vel =  pygame.math.Vector2(0, 0)
         self.acc =  pygame.math.Vector2(0, 0)
-        self.input_force = pygame.math.Vector2(0, 0)
+        self.forces = []
 
     def update(self):
         self.pos += self.vel * self.friction
