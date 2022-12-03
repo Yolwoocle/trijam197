@@ -4,9 +4,10 @@ def load_image(path):
     return pygame.image.load(path)
 
 class Object:
-    def __init__(self, x, y) -> None:
-        self.pos = pygame.math.Vector2(x, y)
-        self.vel = pygame.math.Vector2(0, 0)
+    def __init__(self, x=0, y=0) -> None:
+        self.pos =  pygame.math.Vector2(x, y)
+        self.size = pygame.math.Vector2(10, 10)
+        self.vel =  pygame.math.Vector2(0, 0)
 
 class Image:
     test = load_image('img/test.png')
@@ -20,7 +21,8 @@ class Animated(Object):
         self.current_sprite = 0
         
     def draw(self):
-        if len(self.sprites)<self.current_sprite:
+        if len(self.sprites)>self.current_sprite:
+            self.sprites[self.current_sprite] = pygame.transform.scale(self.sprites[self.current_sprite], (200, 200))
             screen.blit(self.sprites[self.current_sprite], self.pos)
 
 
@@ -36,7 +38,7 @@ class Player(Animated):
         self.pos += self.vel * self.friction
 
     def draw(self):
-        ...
+        super().draw()
 
         
 
