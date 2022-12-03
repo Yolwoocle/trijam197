@@ -2,7 +2,7 @@ import pygame
 
 size = (700, 500)
 
-limits = ((0, 0, -1000), (700, 500, 10000))
+limits = ((0, 0, -100000), (700, 500, 10000))
 
 vec2 = pygame.math.Vector2
 vec3 = pygame.math.Vector3
@@ -57,7 +57,7 @@ class Object:
                 self.pos.z += self.vel.z
         
         if self.vel.z>0:
-            if self.pos.z>limits[1][2]:
+            if self.pos.z<limits[1][2]:
                 self.pos.z += self.vel.z
         
         
@@ -134,6 +134,7 @@ class Player(Animated):
         super().draw()
     
     def split(self):
+        global should_split
         should_split = True
         # objects.append(Player(self.size.x/2, self.size.y/2))
         # self.size /= 2
@@ -150,8 +151,8 @@ class Ball(Animated):
         self.bounce_mult = 0.4
         
         self.gravity = pygame.math.Vector3(0, 0, -9.81)
-        self.mass = 1
-        
+        self.mass = 10
+        self.friction = 0
     
     def update(self):
         super().update()
@@ -216,9 +217,9 @@ while carryOn:
     if should_split:
         print("Should split!")
         balls = [o for o in objects if type(o)==Player]
-        balls.sort(key=lambda x, y: x.size.x<size.size.y)
-        balls[0].size /= 2
-        objects.append(Player(balls[0].size.x, balls[0].size.y))
+        balls.sort(key=lambda x: x.size.x)
+        balls[-1].shrink()
+        objects.append(Player(balls[-1].size.x, balls[-1].size.y))
     
     should_split = False
 
