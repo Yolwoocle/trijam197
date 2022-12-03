@@ -1,5 +1,18 @@
 import pygame 
 
+class Animated(Object):
+    def __init__(self):
+        self.advancement = 0
+        self.sprites = []
+
+class Ball(Object):
+    def __init__(self, initSize=10):
+        self.size = initSize
+    
+    def split(self):
+        self.size /= 2
+
+
 pygame.init()
 
 # Define some colors
