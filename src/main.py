@@ -1,9 +1,9 @@
 import pygame
 import random
 
-size = (700, 500)
+size = (1000, 800)
 
-limits = ((0, 0, -10), (700, 500, 10000))
+limits = ((0, 0, -10), (size[0], size[1], 10000))
 
 vec2 = pygame.math.Vector2
 vec3 = pygame.math.Vector3
@@ -24,7 +24,7 @@ class Object:
         self.forces = []
         self.one_forces = []
         self.friction = 0.4
-        self.gravity = pygame.math.Vector3()
+        self.gravity = pygame.math.Vector3(0, 0, -3)
         self.mass = 2
 
     def update(self):
@@ -105,7 +105,7 @@ class Player(Animated):
 
         self.speed = 10
         self.size = vec2(200, 200)
-        self.forces = [pygame.math.Vector3(0,0,0)]
+        self.forces = [pygame.math.Vector3(0,0,0), vec3()]
         self.input_rate = 5
 
     def update(self):
@@ -135,6 +135,9 @@ class Player(Animated):
         if self.forces[0].length()>0:
             self.forces[0].normalize_ip()
             self.forces[0]*=self.input_rate
+        
+        if random.random()>0.9:
+            self.forces[1] = vec3(random.random()-0.5, random.random()-0.5, random.random()-0.5).normalize()*random.random()*0.2
 
     def draw(self):
         super().draw()
@@ -161,7 +164,7 @@ class Ball(Animated):
         
         self.bounce_mult = 10
         
-        self.gravity = pygame.math.Vector3(0, 0, -3)
+        # self.gravity = pygame.math.Vector3(0, 0, -3)
         self.mass = 10
         self.friction = 0.1
     
@@ -238,7 +241,7 @@ while carryOn:
         balls[-1].shrink()
         np = Player(balls[-1].pos.x, balls[-1].pos.y)
         np.size = vec2(balls[-1].size.x, balls[-1].size.y)
-        f = vec3(random.random(), random.random(), random.random()).normalize()*100
+        f = vec3(random.random()-0.5, random.random()-0.5, random.random()).normalize()*min(0.6, random.random())*100
         np.one_forces.append(f)
         balls[-1].one_forces.append(-f)
         objects.append(np)
