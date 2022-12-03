@@ -10,7 +10,7 @@ class Object:
 
 
 class Image:
-    test = pygame.image.load('img/test.png')
+    test = load_image('img/test.png')
 
 class Player(Object):
     def __init__(self, x, y) -> None:
