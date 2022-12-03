@@ -230,7 +230,6 @@ while carryOn:
         object.update()
     
     if should_split:
-        print("Should split!")
         balls = [o for o in objects if type(o)==Player]
         balls.sort(key=lambda x: x.size.x)
         balls[-1].shrink()
