@@ -10,11 +10,17 @@ class Object:
         self.vel =  pygame.math.Vector2(0, 0)
         self.acc =  pygame.math.Vector2(0, 0)
         self.forces = []
-        self.friction = 1
+        self.friction = 0
+        self.mass = 10
 
     def update(self):
-        self.acc = sum(self.forces) - self.friction*self.vel.length()
-        self.vel += self.acc
+        self.acc = pygame.math.Vector2(0, 0)
+        for f in self.forces:
+            self.acc = self.acc + f
+        # if(self.vel.length()>0):
+            # print((self.friction)*(self.vel.normalize()))
+            # self.acc -= (self.friction)*(self.vel.normalize())
+        self.vel += self.acc / self.mass
         self.pos += self.vel
 
 class Image:
@@ -42,28 +48,31 @@ class Player(Animated):
         self.image = Image.test
         self.friction = 0.97
         self.speed = 10
+        self.forces = [pygame.math.Vector2(0, 0)]
 
     def update(self):
         super().update()
 
         keys = pygame.key.get_pressed()
-        direction = pygame.math.Vector2()
+        self.forces[0] = pygame.math.Vector2(0, 0)
         if keys[pygame.K_LEFT]: # We can check if a key is pressed like this
-            direction.x = -1
+            self.forces[0].x += -1
+            self.forces[0].y += 0
         
         if keys[pygame.K_RIGHT]:
-            direction.x = 1
+            self.forces[0].x += 1
+            self.forces[0].y += 0
 
         if keys[pygame.K_UP]:
-            direction.y = -1
+            self.forces[0].x += 0
+            self.forces[0].y += -1
 
         if keys[pygame.K_DOWN]:
-            direction.y = 1
-            
-        if direction.length() > 0:
-            direction.normalize()
-        
-        self.acc = direction
+            self.forces[0].x += 0
+            self.forces[0].y += 1
+
+        if self.forces[0].length()>0:
+            self.forces[0].normalize_ip()        
 
     def draw(self):
         super().draw()
