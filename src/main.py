@@ -84,7 +84,7 @@ class Object:
         self.pos.z = max(0, self.pos.z)
         
         
-        if(self.vel.length()<=0.1 and self.acc.length()<=0.1):
+        if(self.vel.length()<=0.3 and self.acc.length()<=0.1):
             self.vel = pygame.math.Vector3()
 
 class Image:
@@ -114,7 +114,7 @@ class Animated(Object):
         if len(self.sprites)>self.current_sprite:            
             # s = abs(1/max(1, self.pos.z ))
             s = 1
-            self.shadow_spr = pygame.transform.scale(load_image(Image.ball_shadow), (self.size.x * s, self.size.y * s))
+            self.shadow_spr = pygame.transform.scale(self.shadow_spr, (self.size.x * s, self.size.y * s))
             screen.blit(self.shadow_spr, self.pos.xy - (self.size - vec2(0, 20))/2)
             
             self.sprites[self.current_sprite] = pygame.transform.scale(self.osprites[self.current_sprite], (self.scrouch*self.size.x, 1/self.scrouch*self.size.y))
@@ -130,6 +130,9 @@ class Animated(Object):
                 self.selapsed = 0
             else:
                 self.selapsed +=1
+    
+    def update_shadow(self):
+        self.shadow_spr = load_image(Image.ball_shadow)
 
 
 class Player(Animated):
@@ -180,8 +183,10 @@ class Player(Animated):
     
     def collide(self):
         others = [o for o in objects if o!=self and type(o)==Player]
+        hs = self.size.x/2
         for other in others:
-            if (other.pos-self.pos).length()<(self.size.x/2+other.size.x/2)*0.6:
+            if (other.pos.x-self.pos.x)>hs+other.size.x or (other.pos.y-self.pos.y)>hs+other.size.y: continue
+            if (other.pos-self.pos).length()<(hs+other.size.x/2)*0.6:
                 normal = (other.pos-self.pos).normalize()*10
                 other.one_forces.append(normal)
                 self.one_forces.append(-normal)
@@ -198,9 +203,12 @@ class Player(Animated):
     def shrink(self):
         # self.life *= 0.8
         self.size *= 0.8
+        self.update_shadow()
     
     def sploutch(self):
         self.scrouch = 1.8
+        self.size = self.size.normalize()*min(200, (self.size*1.1).length())
+        self.update_shadow()
 
 
 
@@ -234,7 +242,8 @@ class Ball(Animated):
         super().update()
         
         if self.pos.z < 1:
-            self.one_forces.append(0.8 * vec3(0, 0, abs(self.vel.z) * self.bounce_mult))
+            dir = vec2(2*random.random()-1, 2*random.random()-1)*1.3*(self.vel.length() if self.vel.length()>1 else 0)
+            self.one_forces.append(0.8 * vec3(dir.x, dir.y, abs(self.vel.z) * self.bounce_mult))
             self.vel.z = 0
             self.pos.z = 0
             self.explode()
@@ -267,11 +276,13 @@ class Ball(Animated):
     
     def collide(self):
         global score
-        
         slimes = [o for o in objects if type(o)==Player]
         for slime in slimes:
-            if (slime.pos-self.pos).length()<(self.size.x/2+slime.size.x/2)*1.2:
-                self.one_forces.append(vec3(-self.vel.x+(2*random.random()-1)*5, -self.vel.y+(2*random.random()-1)*bounce_spread, 100))
+            if (slime.pos.xy-self.pos.xy).length()<(self.size.x/2+slime.size.x/2)*1.2 and self.pos.z<70:
+                force_to_center = vec2(size[0]/2-self.pos.x, size[1]/2-self.pos.y)
+                if force_to_center.length()>0: force_to_center.normalize_ip()
+                force_to_center = vec3(force_to_center.x, force_to_center.y, 0)*10
+                self.one_forces.append(vec3(-self.vel.x+(2*random.random()-1)*5, -self.vel.y+(2*random.random()-1)*bounce_spread, 100) + force_to_center)
                 slime.sploutch()
                 score += 1
                 return
@@ -303,7 +314,9 @@ objects = [
 font = pygame.font.Font('Roboto-Regular.ttf', 128)
 
 
-won = True
+won = False
+
+fps = 0
 
 while carryOn:
     for event in pygame.event.get():
@@ -317,13 +330,14 @@ while carryOn:
         object.update()
         if object.size.x < 0.3:
             object.deleteme = True
-        
+    
     for object in objects:
         if object.deleteme:
             objects.pop(i)
         i+=1
     
     if score>=100:
+        won = True
         break
     
     if len(objects)==1:
@@ -352,6 +366,10 @@ while carryOn:
     
     img = font.render(str(score), True, black)
     screen.blit(img, (10, 10))
+
+    # fps = clock.get_fps()
+    # img = font.render(str(int(fps)), True, black)
+    # screen.blit(img, (size[0]-80*3, 10))
 
     pygame.display.flip()
 
